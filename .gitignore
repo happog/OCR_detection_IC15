@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+
+# C extensions
+*.so
+*.o
+
+# Distribution / packaging
+.Python
+build/
+
+# data file
+weights/
+eval/
+logs/
+test_data/

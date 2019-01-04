@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG, format='')
 
 def load_model(model_path, with_gpu):
     logger.info("Loading checkpoint: {} ...".format(model_path))
-    checkpoints = torch.load(model_path)
+    checkpoints = torch.load(model_path, map_location='cpu')
     if not checkpoints:
         raise RuntimeError('No checkpoint found.')
     config = checkpoints['config']
@@ -68,7 +68,10 @@ def main(args:argparse.Namespace):
     true_pos, true_neg, false_pos, false_neg = [0] * 4
     for image_fn in image_dir.glob('*.jpg'):
         gt_path = annotation_dir / image_fn.with_name('gt_{}'.format(image_fn.stem)).with_suffix('.txt').name
-        labels  = load_annotation(gt_path)
+        try:
+            labels  = load_annotation(gt_path)
+        except:
+            labels  = None
         #try:
         with torch.no_grad():
             #test = pathlib.Path('datasets/ICDAR2015/ch4_test_images/img_401.jpg')
@@ -103,15 +106,15 @@ if __name__ == '__main__':
     logger = logging.getLogger()
 
     parser = argparse.ArgumentParser(description='Model eval')
-    parser.add_argument('-m', '--model', default='./saved/FOTS/model_best.pth.tar', type=pathlib.Path,
+    parser.add_argument('-m', '--model', default='./test_data/retrained_model.pth.tar', type=pathlib.Path,
                         help='path to model')
-    parser.add_argument('-o', '--output_img_dir', default='./results/images', type=pathlib.Path,
+    parser.add_argument('-o', '--output_img_dir', default='./test_data/res', type=pathlib.Path,
                         help='output dir for drawn images')
-    parser.add_argument('-t', '--output_txt_dir', default='./results/groundtruth', type=pathlib.Path,
+    parser.add_argument('-t', '--output_txt_dir', default='./test_data/res', type=pathlib.Path,
                         help='output dir for drawn images')
-    parser.add_argument('-i', '--image_dir', default='./datasets/ICDAR2015/ch4_test_images', type=pathlib.Path, 
+    parser.add_argument('-i', '--image_dir', default='./test_data/image', type=pathlib.Path, 
                         help='dir for input images')
-    parser.add_argument('-a', '--annotation_dir', default='./datasets/ICDAR2015/Challenge4_Test_Task1_GT', type=pathlib.Path, 
+    parser.add_argument('-a', '--annotation_dir', default='./test_data/image', type=pathlib.Path, 
                         help='dir for input images')
                         
     args = parser.parse_args()

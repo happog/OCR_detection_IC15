@@ -250,7 +250,7 @@ class Toolbox:
             x2 = min(int(x2_0 + 0.25 * (x2_0 - x1_0)), image.shape[1] - 1)
             image_new = image[y1:y2, x1:x2]
 
-            # # Í¼Ïñ´¦Àí
+            # # Í¼ï¿½ï¿½ï¿½ï¿½
             gray_2 = image_new[:, :, 0]
             gradX = cv2.Sobel(gray_2, ddepth = cv2.CV_32F, dx = 1, dy = 0, ksize = -1)
             gradY = cv2.Sobel(gray_2, ddepth = cv2.CV_32F, dx = 0, dy = 1, ksize = -1)
@@ -351,10 +351,10 @@ class Toolbox:
                     f.write(bboxstr)       
         f.close()
 
-        if boxes is not None:
+        if boxes is not None and labels is not None:
             res = Toolbox.comp_gt_and_output(boxes, labels, 0.5)
         else:
-            res = (0, len(labels), 0)
+            res = (0, 0, 0)
         if output_dir:
             img_path = output_dir / im_fn.name
             cv2.imwrite(img_path.as_posix(), im[:, :, ::-1])
